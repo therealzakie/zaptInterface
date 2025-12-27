@@ -1,7 +1,7 @@
 ![images/logo.png](images/logo.png)
 
 > [!IMPORTANT]
-> DO NOT USE FOR **ANY** USE UNTIL THIS WARNING IS GONE!
+> DO NOT USE FOR **ANY** PURPOSE UNTIL THIS WARNING IS GONE!
 > THE WARNING MEANS ZAPT-Interface is INCOMPLETE!
 
 # an (at least made for) at-boot interface
