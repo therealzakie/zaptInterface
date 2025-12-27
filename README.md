@@ -1,5 +1,9 @@
 ![images/logo.png](images/logo.png)
 
+> ![IMPORTANT]
+> DO NOT USE FOR **ANY** USE UNTIL THIS WARNING IS GONE!
+> THE WARNING MEANS ZAPT-Interface is INCOMPLETE!
+
 # an (at least made for) at-boot interface
 
 run it at boot, mostly suited for ~~an~~ ***my*** Arch Linux installation (of course, to my preferences) but i'm sure it'll work for the majority of people
