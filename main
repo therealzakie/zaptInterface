@@ -4,6 +4,7 @@
 
 from rich import print
 import sys
+from time import sleep
 
 # lovely variables for output
 
@@ -14,19 +15,25 @@ errorv = "[bold red][ERROR][/bold red]"
 
 # check sys.argv (e.g. --debug)
 
-if sys.argv[1] == "--debug" or sys.argv[1] == "-d":
+try:
 
-	# turn off interface
+	if sys.argv[1] == "--debug" or sys.argv[1] == "-d":
 
-	interface = False
-	debug = True
+		# turn off interface
 
-	print(f"{debugv} DEBUG MODE IS ON")	
-	print(f"{debugv} sys.argv = {sys.argv}")
+		interface = False
+		debug = True
 
-	print(f"{debugv} you may choose to load the interface or not.")
+		print(f"{debugv} DEBUG MODE IS ON")	
+		print(f"{debugv} sys.argv = {sys.argv}")
 
-else:
+		print(f"{debugv} you may choose to load the interface or not.")
+
+	else:
+		interface = True
+		debug = False
+
+except IndexError:
 	interface = True
 	debug = False
 
@@ -42,5 +49,33 @@ while True:
 
 		break
 
-	elif interface == False:
+	elif interface == False and debug == True:
+		inputv = input("would you like to enable the interface?\n(Y/n) $ ")
+		print(f"{debugv} inputv = {inputv}")
+		inputv = inputv.lower()
+		print(f"{debugv} inputv.lower() = {inputv}")
+
+		if inputv == "y":
+			print(f"{debugv} ZAPT-Interface enabled.")
+			interface = True
+		else:
+			interface = False
+
+	else:
+		print(f"{errorv} uh oh! an oopsie happened somehow, please try running again.")
+		print(f"{errorv} if it does not fix, try on another O.S. or try using the latest version.")
 		
+		t = 10
+		
+		print(f"{errorv} ZAPT-Interface will close in {t} seconds.")
+
+		while t:
+			mins, secs = divmod(t, 60)
+			timer = '{:02d}:{:02d}'.format(mins, secs)
+			print(timer, end='\r')  # Overwrite the line each second
+			sleep(1)
+			t -= 1
+
+		print(f"{infov} Z.A.P.T-Interface has stopped")
+
+		exit()
