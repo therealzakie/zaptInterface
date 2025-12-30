@@ -1,10 +1,33 @@
-#!/bin/python
+#!/usr/bin/python
 
 # libraries
 
+from __future__ import annotations
 from rich import print
 import sys
 from time import sleep
+import os
+import subprocess
+import pytermgui as ptg
+from argparse import ArgumentParser, Namespace
+# import argparse
+
+# argument management
+
+# parser = ArgumentParser()
+# parser.add_argument("-d", "--position", help = "ahh", type=int)
+# parser.add_argument("-s", "--sample", help = "ahh", type=int)
+
+# args = parser.parse_args()
+# col = args.position
+# sample = args.sample
+
+# colours
+
+PALETTE_LIGHT = "#0462dd"
+PALETTE_MID = "#0462dd"
+PALETTE_DARK = "#0e36c9"
+PALETTE_DARKER = "#0e36c9"
 
 # lovely variables for output
 
@@ -13,7 +36,7 @@ debugv = "[bold magenta][DEBUG][/bold magenta]"
 warningv = "[bold yellow][WARNING][/bold yellow]"
 errorv = "[bold red][ERROR][/bold red]"
 
-# check sys.argv (e.g. --debug)
+# check arguments (e.g. --debug)
 
 try:
 
@@ -27,7 +50,7 @@ try:
 		print(f"{debugv} DEBUG MODE IS ON")	
 		print(f"{debugv} sys.argv = {sys.argv}")
 
-		print(f"{debugv} you may choose to load the interface or not.")
+		print(f"{debugv} you may choose to load the interface in another window.")
 
 	else:
 		interface = True
@@ -37,45 +60,411 @@ except IndexError:
 	interface = True
 	debug = False
 
-while True:
-	if interface == True:
-		# info for interface information
+# info for interface information
 
-		print(f"{infov} Z.A.P.T-Interface is starting")
-		print(f"{infov} if you do not see the interface, please try to debug it or report an issue in github.")
-		print(f"{infov} github link: https://github.com/therealzakie/zaptInterface")
+print(f"{infov} Z.A.P.T-Interface is starting")
+print(f"{infov} if you do not see the interface, please try to debug using '--debug' or report an issue in github.")
+print(f"{infov} github link: https://github.com/therealzakie/zaptInterface")
 
-		# break in half
+# ACTUAl interface
 
-		break
+if debug == True: print(f"{debugv} initializing PyTermGUI")
 
-	elif interface == False and debug == True:
-		inputv = input("would you like to enable the interface?\n(Y/n) $ ")
-		print(f"{debugv} inputv = {inputv}")
-		inputv = inputv.lower()
-		print(f"{debugv} inputv.lower() = {inputv}")
+# very hacky stuff
 
-		if inputv == "y":
-			print(f"{debugv} ZAPT-Interface enabled.")
-			interface = True
-		else:
-			interface = False
+def _process_arguments(argv: list[str] | None = None) -> Namespace: # useless piece of poo
+    # processes command line arguments.
+    #
+    # note that you don't _have to_ use the bultin argparse module for this; it
+    # is just what the module uses.
+    #
+    # args:
+    #    argv: A list of command line arguments, not including the binary path
+    #        (sys.argv[0]).
 
-	else:
-		print(f"{errorv} uh oh! an oopsie happened somehow, please try running again.")
-		print(f"{errorv} if it does not fix, try on another O.S. or try using the latest version.")
-		
-		t = 10
-		
-		print(f"{errorv} ZAPT-Interface will close in {t} seconds.")
+    # parser = ArgumentParser(description="the ZAPT Interface.")
 
-		while t:
-			mins, secs = divmod(t, 60)
-			timer = '{:02d}:{:02d}'.format(mins, secs)
-			print(timer, end='\r')  # Overwrite the line each second
-			sleep(1)
-			t -= 1
+    # return parser.parse_args(argv)
 
-		print(f"{infov} Z.A.P.T-Interface has stopped")
+    pass
 
-		exit()
+def _create_aliases() -> None:
+    # creates all the TIM aliases used by the application.
+    #
+    # aliases should generally follow the following format:
+    #
+    #    namespace.item
+    #
+    # for example, the title color of an app named "myapp" could be something like:
+    #
+    #    myapp.title
+
+    ptg.tim.alias("app.text", "#c1c7b0")
+
+    ptg.tim.alias("app.header", f"bold @{PALETTE_MID} #d9d2bd")
+    ptg.tim.alias("app.header.fill", f"@{PALETTE_LIGHT}")
+
+    ptg.tim.alias("app.title", f"bold {PALETTE_LIGHT}")
+    ptg.tim.alias("app.button.label", f"bold @{PALETTE_DARK} app.text")
+    ptg.tim.alias("app.button.highlight", "inverse app.button.label")
+
+    ptg.tim.alias("app.footer", f"@{PALETTE_DARKER}")
+
+def _configure_widgets() -> None:
+    # defines all the global widget configurations.
+    #
+    # some example lines you could use here:
+    #
+    #    ptg.boxes.DOUBLE.set_chars_of(ptg.Window)
+    #    ptg.Splitter.set_char("separator", " ")
+    #    ptg.Button.styles.label = "myapp.button.label"
+    #    ptg.Container.styles.border__corner = "myapp.border"
+
+    ptg.boxes.DOUBLE.set_chars_of(ptg.Window)
+    ptg.boxes.ROUNDED.set_chars_of(ptg.Container)
+
+    ptg.Button.styles.label = "app.button.label"
+    ptg.Button.styles.highlight = "app.button.highlight"
+
+    ptg.Slider.styles.filled__cursor = PALETTE_MID
+    ptg.Slider.styles.filled_selected = PALETTE_LIGHT
+
+    ptg.Label.styles.value = "app.text"
+
+    ptg.Window.styles.border__corner = "#C2B280"
+    ptg.Container.styles.border__corner = PALETTE_DARK
+
+    ptg.Splitter.set_char("separator", "")
+
+def _define_layout() -> ptg.Layout:
+    # defines the application layout.
+    #
+    # layouts work based on "slots" within them. each slot can be given dimensions for
+    # both width and height. integer values are interpreted to mean a static width, float
+    # values will be used to "scale" the relevant terminal dimension, and giving nothing
+    # will allow PTG to calculate the corrent dimension.
+
+    layout = ptg.Layout()
+
+    # a header slot with a height of 1
+    layout.add_slot("Header", height=1)
+    layout.add_break()
+
+    # a body slot that will fill the entire width, and the height is remaining
+    layout.add_slot("Body")
+
+    # a slot in the same row as body, using the full non-occupied height and
+    # 20% of the terminal's height.
+    layout.add_slot("Body right", width=0.2)
+
+    layout.add_break()
+
+    # a footer with a static height of 1
+    layout.add_slot("Footer", height=1)
+
+    return layout
+
+# little funny functions
+
+# functions for output
+
+def delayPrint(string, mode):
+    if mode == "debug":
+        delayedDebugOutput.append(string)
+    elif mode == "normal":
+        delayedOutput.append(string)
+    else:
+        delayedOutput.append(f"{errorv} bad mode for function: 'delayedOutput()', will output like 'normal' mode.\n{string}")
+
+# hyprland functions
+
+def hyprPlugins(manager: ptg.WindowManager) -> None:
+    # how do i activate hyprland plugins without sudo again?
+    pass
+
+def hyprReloadConfig(manager: ptg.WindowManager) -> None:
+    def reloadConfig():
+        os.system("hyprctl reload |& :")
+        hyprReloadWindow.close()
+
+    hyprReloadWindow = ptg.Window(
+        "[app.title]do you really want to reload hyprland's config?",
+        "",
+        ptg.Container(
+            ptg.Splitter(
+                ptg.Button("yes", lambda *_: reloadConfig()),
+                ptg.Button("no", lambda *_: hyprReloadWindow.close()),
+            ),
+        ),
+    ).center()
+
+    hyprReloadWindow.select(1)
+    manager.add(hyprReloadWindow)
+
+# waybar functions
+
+def startWaybar(manager: ptg.WindowManager) -> None:
+    os.system("waybar & disown |& :")
+
+def rebootWaybar(manager: ptg.WindowManager) -> None:
+    # do magical stuff to restart waybar
+
+    def restartWaybar():
+        os.system("pkill waybar |& : && waybar & disown |& :")
+        rebootWaybarWindow.close()
+
+    rebootWaybarWindow = ptg.Window(
+        "[app.title]do you really want to restart waybar?",
+        "",
+        ptg.Container(
+            ptg.Splitter(
+                ptg.Button("yes", lambda *_: restartWaybar()),
+                ptg.Button("no", lambda *_: rebootWaybarWindow.close()),
+            ),
+        ),
+    ).center()
+
+    rebootWaybarWindow.select(1)
+    manager.add(rebootWaybarWindow)
+
+def stopWaybar(manager: ptg.WindowManager) -> None:
+    def pkillWaybar():
+        os.system("pkill waybar")
+        stopWaybarWindow.close()
+
+    stopWaybarWindow = ptg.Window(
+        "[app.title]do you really want to stop waybar?",
+        "",
+        ptg.Container(
+            ptg.Splitter(
+                ptg.Button("yes", lambda *_: pkillWaybar()),
+                ptg.Button("no", lambda *_: stopWaybarWindow.close()),
+            )
+        )
+    ).center()
+
+    stopWaybarWindow.select(1)
+    manager.add(stopWaybarWindow)
+
+# connection functions
+
+def networkManager(manager: ptg.WindowManager) -> None:
+
+    def tui():
+        def closeWindows():
+            nmErrorWindow.close()
+            sleep(0.3)
+            nmWindow.close()
+        # get current terminal somehow and run nmtui ¯\_(ツ)_/¯
+        with open("terminal.txt", "r") as f:
+            c = f.readlines()
+            try:
+                os.system(f"{terminal} -e nmtui")
+                nmWindow.close()
+            except NameError:
+                nmErrorWindow = ptg.Window(
+                    "[app.title]you have not set your default terminal",
+                    "",
+                    ptg.Container(
+                        ptg.Splitter(
+                            ptg.Button("ok", lambda *_: closeWindows()),
+                        ),
+                    ),
+                ).center()
+                
+                nmErrorWindow.select(1)
+                manager.add(nmErrorWindow)
+
+    def gui():
+        os.system("nm-connection-editor & disown |& :")
+        nmWindow.close()
+
+    nmWindow = ptg.Window(
+        "[app.title]would you like to use the TUI or GUI",
+        "",
+        ptg.Container(
+            ptg.Splitter(
+                ptg.Button("TUI", lambda *_: tui()),
+                ptg.Button("GUI", lambda *_: gui()),
+                ptg.Button("close", lambda *_: nmWindow.close()),
+            ),
+        ),
+    ).center()
+    
+    nmWindow.select(1)
+    manager.add(nmWindow)
+
+def blueman(manager: ptg.WindowManager) -> None:
+
+    def tui():
+        # get current terminal somehow and run some blueman tui ¯\_(ツ)_/¯
+        bWindow.close()
+
+    def gui():
+        os.system("blueman-manager & disown |& :")
+        bWindow.close()
+
+    bWindow = ptg.Window(
+        "[app.title]would you like to use the TUI or GUI",
+        "",
+        ptg.Container(
+            ptg.Splitter(
+                ptg.Button("TUI", lambda *_: tui()),
+                ptg.Button("GUI", lambda *_: gui()),
+                ptg.Button("close", lambda *_: bWindow.close()),
+            ),
+        ),
+    ).center()
+    
+    bWindow.select(1)
+    manager.add(bWindow)
+
+# file editing
+
+def setTerminal(manager: ptg.WindowManager) -> None:
+
+    def submit(manager: ptg.WindowManager, window: ptg.Window) -> None:
+        for widget in window:
+            if isinstance(widget, ptg.InputField):
+                OUTPUT[widget.prompt] = widget.value
+                continue
+
+            if isinstance(widget, ptg.Container):
+                label, field = iter(widget)
+                OUTPUT[label.value] = field.value
+
+        with open("terminal.txt", "r") as f:
+            oldTerminal = f.readlines()
+
+        with open("terminal.txt", "w") as f:
+            terminal = OUTPUT.get("terminal")
+            delayPrint(terminal, "normal")
+            delayPrint(f"{debugv} terminal = {terminal}", "debug")
+
+            try:
+                f.write(terminal)
+            except TypeError:
+                stErrorWindow = ptg.Window(
+                    "[app.title]your prompt = None. please manually edit the 'terminal.txt' file and enter your terminal executable name there instead.",
+                    "",
+                    ptg.Container(
+                        ptg.Splitter(
+                            ptg.Button("ok", lambda *_: stErrorWindow.close()),
+                        ),
+                    ),
+                ).center()
+                stErrorWindow.set_title("[surface+2]error")
+
+                delayPrint(f"{errorv} terminal = {terminal}", "normal")
+                terminal = oldTerminal
+                delayPrint(f"{debugv} terminal = {terminal}", "debug")
+                
+                stErrorWindow.select(1)
+                manager.add(stErrorWindow)
+
+        stWindow.close()
+
+    stWindow = ptg.Window(
+        "[app.title]enter your terminal command:",
+        "",
+        ptg.InputField("", prompt="terminal: "),
+        "",
+        ["Submit", lambda *_: submit(manager, stWindow)],
+    ).center()
+
+    stWindow.select(1)
+    manager.add(stWindow)
+
+# variables
+
+terminal = ""
+OUTPUT = {}
+nmUse = False
+bUse = False
+delayedOutput = []
+delayedDebugOutput = []
+
+# main stuff
+
+def main(argv: list[str] | None = None) -> None:
+    # runs the app
+
+    _create_aliases()
+    _configure_widgets()
+
+    args = _process_arguments(argv)
+
+    with ptg.WindowManager() as manager:
+        manager.layout = _define_layout()
+
+        header = ptg.Window(
+            "[app.header] ZAPT-Interface ",
+            box="EMPTY",
+            is_persistant=True,
+        )
+
+        header.styles.fill = "app.header.fill"
+
+        # since header is the first defined slot, this will assign to the correct place (the top)
+        manager.add(header)
+
+        footer = ptg.Window(
+            ptg.Button("quit (CTRL-C)", lambda *_: manager.stop()),
+            box="EMPTY",
+        )
+        footer.styles.fill = "app.footer"
+
+        # since the second slot, body was not assigned to, we need to manually assign to footer
+
+        manager.add(footer, assign="footer")
+
+        manager.add(
+            ptg.Window(
+            	ptg.Collapsible(
+            		"hyprland",
+                    "",
+                    # ptg.Button("activate hyprland plugins", lambda *_: hyprPlugins(manager)),
+                    # "",
+                    ptg.Button("reload hyprland config", lambda *_: hyprReloadConfig(manager)),
+            	),
+                "",
+                ptg.Collapsible(
+                    "waybar",
+                    "",
+                    ptg.Button("restart waybar", lambda *_: rebootWaybar(manager)),
+                    "",
+                    ptg.Button("stop waybar", lambda *_: stopWaybar(manager)),
+                    "",
+                    ptg.Button("start waybar", lambda *_: startWaybar(manager)),
+                ),
+                "",
+                ptg.Button("set terminal", lambda *_: setTerminal(manager)),
+            ).set_title("[surface+2]optional features"),
+            assign="body_right",
+        )
+
+        manager.add(
+            ptg.Window(
+                "",
+                ptg.Collapsible(
+                    "connections",
+                    "",
+                    ptg.Container(
+                        ptg.Splitter(
+                            ptg.Button("network manager", lambda *_: networkManager(manager)),
+                            ptg.Button("blueman", lambda *_: blueman(manager)),
+                        ),
+                        static_width=60,
+                    ),
+                ),
+                vertical_align=ptg.VerticalAlignment.TOP,
+                overflow=ptg.Overflow.SCROLL,
+            ).set_title("[surface+2]main features"),
+            assign="body",
+        )
+    setTerminal(manager)
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
+    if debug == True: print(f"\n{delayedDebugOutput}")
+    print(f"\n{delayedOutput}")

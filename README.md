@@ -15,23 +15,27 @@ run it at boot, mostly suited for ~~an~~ ***my*** Arch Linux installation (of co
 - python (running the program)
 - pytermgui (for the cool tui stuff)
 - rich (for colours and bold fonts (✪o✪))
+- neofetch (to find terminal)
 
-## optional (quality of life features)
+## optional
 
-- network manager (wifi, ethernet)
-- blueman (bluetooth)
+- network manager (wifi, ethernet configuration)
+- blueman (bluetooth configuration)
 
 # how to install
 
 ## method 1: manually
 
 - clone repo `git clone https://github.com/therealzakie/zaptInterface.git && cd zaptInterface`
+- add script path to `$PATH` directory list `export $PATH:{whatever the script directory is}`
+- restart your terminal window or run `source ~/.{shell name}rc`
+- run `zapt`
 
 <!--
  _______________________________________
 / that you are digging into the source  \
 | code, i can see! coming soon so wait, |
-\ the bash install script is.           /
+\ the install script is.                /
  ---------------------------------------
         \
          \
@@ -68,6 +72,7 @@ run it at boot, mostly suited for ~~an~~ ***my*** Arch Linux installation (of co
  ## method 2: install script
 
 - clone repo `git clone https://github.com/therealzakie/zaptInterface.git && cd zaptInterface`
-- run script `./install.sh`
+- run script `./install`
+- the script **should** add the script to your PATH by appending a line in your shell config file, or if not possible, it will instead add it to /usr/bin/.
 
 -->
