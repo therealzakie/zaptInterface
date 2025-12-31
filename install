@@ -18,6 +18,8 @@ while True:
 	i1 = input("""
 welcome to the ZAPT-Interface install script. what would you like to do?
 (A)dd an installation of ZAPT-Interface to PATH
+(I)nstall required depenencies
+(In)stall optional depenencies
 (R)emove ZAPT-Interface
 (Q)uit
 
@@ -42,8 +44,25 @@ $ """).lower()
 	elif i1 == "i":
 		print("installing ZAPT-Interface's dependencies...")
 
+		os.system("pip install --break-system-packages rich")
+		os.system("pip install --break-system-packages pytermgui")
+
 	elif i1 == "in":
 		print("installing ZAPT-Interface's option dependencies...")
+
+		i4 = input("please enter your linux distro here\n(D)ebian-Based\n(A)rch-Based\n(F)edora-Based\n(S)USE-Based\n(O)ther\n$ ").lower()
+
+		if i4 == "d":
+			os.system("sudo apt install network-manager nmtui blueman")
+		elif i4 == "a":
+			os.system("sudo pacman -S networkmanager nm-tui blueman")
+		elif i4 == "f":
+			os.system("sudo dnf install NetworkManager NetworkManager-tui blueman")
+		elif i4 == "s":
+			os.system("sudo zypper install NetworkManager NetworkManager-tui blueman")
+		elif i4 == "o":
+			print("you will need to install the dependencies yourself i am afraid.")
+			print("for dependencies info, vist https://github.com/therealzakie/zaptInterface#optional")
 
 	elif i1 == "r":
 
