@@ -258,6 +258,8 @@ def networkManager(manager: ptg.WindowManager) -> None:
         # get current terminal somehow and run nmtui ¯\_(ツ)_/¯
         with open("terminal.txt", "r") as f:
             c = f.readlines()
+            terminal = c[0] # c is an array so this line cuts it up and makes it the terminal
+            delayPrint(f"terminal = {terminal}", "debug")
             try:
                 os.system(f"{terminal} -e nmtui")
                 nmWindow.close()
