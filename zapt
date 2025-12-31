@@ -10,17 +10,6 @@ import os
 import subprocess
 import pytermgui as ptg
 from argparse import ArgumentParser, Namespace
-# import argparse
-
-# argument management
-
-# parser = ArgumentParser()
-# parser.add_argument("-d", "--position", help = "ahh", type=int)
-# parser.add_argument("-s", "--sample", help = "ahh", type=int)
-
-# args = parser.parse_args()
-# col = args.position
-# sample = args.sample
 
 # colours
 
@@ -38,23 +27,56 @@ errorv = "[bold red][ERROR][/bold red]"
 
 # check arguments (e.g. --debug)
 
+def checkHelp():
+    try:
+        print(sys.argv.index("--help"))
+        helpI = True
+
+    except ValueError:
+        helpI = False
+
 try:
+    try:
+        print(sys.argv.index("--run"))
+        debugI = False
+        helpI = False
 
-	if sys.argv[1] == "--debug" or sys.argv[1] == "-d":
+    except ValueError:
+        try:
+            print(sys.argv.index("--debug"))
+            debugI = True
+            helpI = False
 
-		# turn off interface
+            checkHelp()
 
-		interface = False
-		debug = True
+        except ValueError:
+            debugI = False
+            try:
+                if debugI == True: print(sys.argv.index("--help"))
+                helpI = True
 
-		print(f"{debugv} DEBUG MODE IS ON")	
-		print(f"{debugv} sys.argv = {sys.argv}")
+            except ValueError:
+                helpI = False
 
-		print(f"{debugv} you may choose to load the interface in another window.")
+    if helpI == True:
+        print("example usage: zapt [--help]")
+        print("\nOPTION \t\t INFO")
+        print("--help, \t show this message and quit")
+        print("--run, \t \t run the ZAPT-Interface normally")
+        print("--debug, \t run the ZAPT-Interface in debug mode")
 
-	else:
-		interface = True
-		debug = False
+        exit()
+
+    elif debugI == True:
+        interface = False
+        debug = True
+
+        print(f"{debugv} DEBUG MODE IS ON") 
+        print(f"{debugv} sys.argv = {sys.argv}")
+
+    else:
+        interface = True
+        debug = False
 
 except IndexError:
 	interface = True
