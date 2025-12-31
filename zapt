@@ -278,7 +278,7 @@ def networkManager(manager: ptg.WindowManager) -> None:
             sleep(0.3)
             nmWindow.close()
         # get current terminal somehow and run nmtui ¯\_(ツ)_/¯
-        with open("terminal.txt", "r") as f:
+        with open(".config/zaptInterface/terminal.txt", "r") as f:
             c = f.readlines()
             terminal = c[0] # c is an array so this line cuts it up and makes it the terminal
             delayPrint(f"terminal = {terminal}", "debug")
@@ -357,10 +357,10 @@ def setTerminal(manager: ptg.WindowManager) -> None:
                 label, field = iter(widget)
                 OUTPUT[label.value] = field.value
 
-        with open("terminal.txt", "r") as f:
+        with open(".config/zaptInterface/terminal.txt", "r") as f:
             oldTerminal = f.readlines()
 
-        with open("terminal.txt", "w") as f:
+        with open(".config/zaptInterface/terminal.txt", "w") as f:
             terminal = OUTPUT.get("terminal")
             delayPrint(terminal, "normal")
             delayPrint(f"{debugv} terminal = {terminal}", "debug")
@@ -369,7 +369,7 @@ def setTerminal(manager: ptg.WindowManager) -> None:
                 f.write(terminal)
             except TypeError:
                 stErrorWindow = ptg.Window(
-                    "[app.title]your prompt = None. please manually edit the 'terminal.txt' file and enter your terminal executable name there instead.",
+                    "[app.title]your prompt = None. please manually edit the 'terminal.txt' file inside '.config/zaptInterface' and enter your terminal executable name there instead.",
                     "",
                     ptg.Container(
                         ptg.Splitter(

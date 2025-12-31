@@ -1,0 +1,65 @@
+#!/usr/bin/python
+
+# libraries
+
+import os
+
+print("""
+╔════╗╔═══╗╔═══╗╔════╗     ╔══╗     ╔╗         ╔═╗             
+╚══╗ ║║╔═╗║║╔═╗║║╔╗╔╗║     ╚╣╠╝    ╔╝╚╗        ║╔╝             
+  ╔╝╔╝║║ ║║║╚═╝║╚╝║║╚╝      ║║ ╔═╗ ╚╗╔╝╔══╗╔═╗╔╝╚╗╔══╗ ╔══╗╔══╗
+ ╔╝╔╝ ║╚═╝║║╔══╝  ║║  ╔═══╗ ║║ ║╔╗╗ ║║ ║╔╗║║╔╝╚╗╔╝╚ ╗║ ║╔═╝║╔╗║
+╔╝ ╚═╗║╔═╗║║║    ╔╝╚╗ ╚═══╝╔╣╠╗║║║║ ║╚╗║║═╣║║  ║║ ║╚╝╚╗║╚═╗║║═╣
+╚════╝╚╝ ╚╝╚╝    ╚══╝      ╚══╝╚╝╚╝ ╚═╝╚══╝╚╝  ╚╝ ╚═══╝╚══╝╚══╝
+""")
+
+while True:
+
+	i1 = input("""
+welcome to the ZAPT-Interface install script. what would you like to do?
+(A)dd an installation of ZAPT-Interface to PATH
+(R)emove ZAPT-Interface
+(Q)uit
+
+$ """).lower()
+
+	if i1 == "a":
+		print("adding ZAPT-Interface to PATH")
+		
+		install_dir = input("please type the folder where ZAPT-Interface is installed.\n$ ")
+
+		i2 = input("please enter your shell's config file path here. e.g. /home/username/.bashrc or /home/username/.zshrc\n$ ")
+
+		print("backing up your shell's config...")
+
+		os.system(f"cp {i2} {i2}.bak.zapt")
+
+		print("shell config backed up, now going to add 'zapt' command to PATH")
+
+		with open(i2, "a") as f:
+			f.write(f"\n\n# ZAPT-Interface command\n\nexport $PATH='$PATH:{install_dir}'")
+
+	elif i1 == "i":
+		print("installing ZAPT-Interface's dependencies...")
+
+	elif i1 == "in":
+		print("installing ZAPT-Interface's option dependencies...")
+
+	elif i1 == "r":
+
+		print("NOTE: MAKE SURE YOUR INSTALL DIRECTORY'S NAME IS 'zaptInterface'. IF NOT, THE INSTALL SCRIPT WILL FAIL.")
+
+		i3 = input("are you really sure you want to remove the ZAPT-Interface?\n(y/N) $ ").lower()
+
+		if i3 == "y":
+			print("removing ZAPT-Interface...")
+			os.system("""cd .. && rm -rf zaptInterface""")
+
+			print("ZAPT-Interface has been removed. Thank you for using ZAPT-Interface!\nGoodbye!")
+
+			break
+
+		else:
+			continue
+	else:
+		break

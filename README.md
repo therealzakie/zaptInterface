@@ -28,14 +28,14 @@ run it at boot, mostly suited for ~~an~~ ***my*** Arch Linux installation (of co
 - clone repo `git clone https://github.com/therealzakie/zaptInterface.git && cd zaptInterface`
 - add script path to `$PATH` directory list via your shell's config `export $PATH:{whatever the script directory is}`
 - restart your terminal window or run `source {your shell config}`
-- run `zapt --run`
+- run `zapt --run` or `./zapt --run` if you didn't add the `zapt` command to `$PATH` and inside the install directory
 
 <!--
- _______________________________________
-/ that you are digging into the source  \
-| code, i can see! coming soon so wait, |
-\ the install script is.                /
- ---------------------------------------
+ ________________________________________
+/ It looks like, digging into the source \
+| code, you are, here now, the install   |
+\ script is. Yes, hmmm.                  /
+ ----------------------------------------
         \
          \
           \         ____
@@ -68,10 +68,16 @@ run it at boot, mostly suited for ~~an~~ ***my*** Arch Linux installation (of co
                 \ `t  ._  /
                  "-.t-._:'
 
- ## method 2: install script
+-->
+
+## method 2: install script
 
 - clone repo `git clone https://github.com/therealzakie/zaptInterface.git && cd zaptInterface`
-- run script `./install`
-- the script **should** add the script to your PATH by appending a line in your shell config file
+- run script `./install` and select your option
+- run command `zapt --run` or `./zapt --run` if you didn't add the `zapt` command to `$PATH` and inside the install directory
 
--->
+# roadmap:
+
+- ~~actual program~~
+- ~~install script~~
+- move config files over to ~/.config/ in favor of the XDG standard
