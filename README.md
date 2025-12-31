@@ -26,8 +26,8 @@ run it at boot, mostly suited for ~~an~~ ***my*** Arch Linux installation (of co
 ## method 1: manually
 
 - clone repo `git clone https://github.com/therealzakie/zaptInterface.git && cd zaptInterface`
-- add script path to `$PATH` directory list `export $PATH:{whatever the script directory is}`
-- restart your terminal window or run `source ~/.{shell name}rc`
+- add script path to `$PATH` directory list via your shell's config `export $PATH:{whatever the script directory is}`
+- restart your terminal window or run `source {your shell config}`
 - run `zapt`
 
 <!--
