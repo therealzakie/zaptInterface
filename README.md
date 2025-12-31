@@ -15,7 +15,6 @@ run it at boot, mostly suited for ~~an~~ ***my*** Arch Linux installation (of co
 - python (running the program)
 - pytermgui (for the cool tui stuff)
 - rich (for colours and bold fonts (✪o✪))
-- neofetch (to find terminal)
 
 ## optional
 
