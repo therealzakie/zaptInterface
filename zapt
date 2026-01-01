@@ -59,7 +59,7 @@ try:
                 helpI = False
 
     if helpI == True:
-        print("example usage: zapt [--help]")
+        print("usage: zapt [OPTION]")
         print("\nOPTION \t\t INFO")
         print("--help, \t show this message and quit")
         print("--run, \t \t run the ZAPT-Interface normally")
