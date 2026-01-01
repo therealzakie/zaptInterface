@@ -55,7 +55,7 @@ $ """).lower()
 		if i4 == "d":
 			os.system("sudo apt install network-manager nmtui blueman")
 		elif i4 == "a":
-			os.system("sudo pacman -S networkmanager nm-tui blueman")
+			os.system("sudo pacman -S networkmanager nmtui blueman")
 		elif i4 == "f":
 			os.system("sudo dnf install NetworkManager NetworkManager-tui blueman")
 		elif i4 == "s":
